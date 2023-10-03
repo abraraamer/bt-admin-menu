@@ -1,0 +1,127 @@
+body{
+    //overrides
+    $default-menu-width: 160px;
+    $folded-menu-width: 35px;
+    $scrollbar-width: 10px;
+    //17px
+
+    $menu-width: $default-menu-width +  $scrollbar-width;
+    $admin-bar-height: 32px;
+    $admin-bar-height-mobile: 46px;
+    $menu-item-height: 35px;
+    $menu-width-folded: $folded-menu-width + $scrollbar-width;
+    $bottom-url-area: 20px;
+    $max-phone-menu: 781px;
+    $min-autofold-menu: $max-phone-menu + 1;
+    $max-autofold-menu: 960px;
+    $min-full-menu: $max-autofold-menu + 1;
+    #adminmenuwrap{
+        position: fixed!important;
+        top: $admin-bar-height-mobile!important;
+        @media(min-width: $min-autofold-menu){
+            top: $admin-bar-height!important;
+        }
+    }
+
+    @media(max-width: $max-phone-menu){
+        &.auto-fold #adminmenu .selected .wp-submenu,
+        &.auto-fold #adminmenu .wp-menu-open .wp-submenu,
+        ul.wp-submenu{
+            position: static!important;
+        }
+        .auto-fold #adminmenu a.menu-top:focus + .wp-submenu,
+            .auto-fold #adminmenu .wp-has-current-submenu a.menu-top:focus + .wp-submenu{
+            position: static!important;
+        }
+    }
+    @media(min-width: $min-full-menu){
+        &:not(.folded) #adminmenu .wp-has-current-submenu .wp-submenu{
+            position: static!important;
+        }
+    }
+    @media(min-width: $max-phone-menu) and (max-width: $max-autofold-menu){
+        &.auto-fold{
+            #adminmenuback, #adminmenuwrap, #adminmenu{
+                width: $menu-width-folded;
+            }
+            #adminmenu li#collapse-menu {
+                width: $menu-width-folded;
+            }
+        }
+    }
+    &.auto-fold{
+        #adminmenu div.wp-menu-image{
+            position: static;
+        }
+    }
+    @media(min-width: $min-autofold-menu){
+        &.folded{
+            #adminmenuback, #adminmenuwrap, #adminmenu{
+                width: $menu-width-folded;
+            }
+            #adminmenu div.wp-menu-image{
+                position: static;
+            }
+        }
+    }
+    #wpcontent, #wpfooter{
+        margin-left: $menu-width;
+    }
+    #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap{
+        width: $menu-width;
+    }
+    #adminmenu li.opensub > .wp-submenu,
+    #adminmenu li.menu-top:hover,
+        #adminmenu li.opensub > a.menu-top,
+        #adminmenu li > a.menu-top:focus,#adminmenu .wp-has-current-submenu > .wp-submenu{
+        background-color: #2271b1;
+        color: #fff;
+    }
+    #adminmenu .wp-has-current-submenu > .wp-submenu{
+        border-top: 1px solid white;
+    }
+    ul#adminmenu a.wp-has-current-submenu:after, ul#adminmenu > li.current > a.current:after,
+        #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover:after, #adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within:after {
+        display: none;
+    }
+    //custom style
+
+    #adminmenu{
+        box-sizing: border-box;
+        overflow: hidden auto;
+        position: static!important;
+        max-height: calc(100vh - #{$bottom-url-area + $admin-bar-height + $menu-item-height});
+        //collapse menu is sticky at the bottom
+        margin: 0;
+        //admin bar 32px + 12px margin
+        padding: 10px 0;
+        &::-webkit-scrollbar{
+            width: $scrollbar-width;
+        }
+        &::-webkit-scrollbar-track{
+            background-color: lightgrey;
+        }
+        &::-webkit-scrollbar-thumb{
+            background-color: darkgrey;
+        }
+        li{
+            position: static!important;
+            &#collapse-menu{
+                position: fixed!important;
+                bottom: $bottom-url-area;
+                //when you hover over a link, the url shows at the very bottom, covering the item.
+                width: $menu-width;
+                border-top: 1px solid rgb(60, 67, 74);
+            }
+            &:after{
+                display: none;
+            }
+        }
+
+    }
+    &.folded{
+        #adminmenu li#collapse-menu {
+            width: $menu-width-folded;
+        }
+    }
+}
