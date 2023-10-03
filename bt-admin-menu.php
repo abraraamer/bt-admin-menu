@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Bent Tech - Admin Menu
+ * Plugin Name: Admin Menu Scroll
  * Version: 1.0
  * Plugin URI: https://themeforest.net/user/bent-tech33
  * Description: Scrollable Admin Menu
