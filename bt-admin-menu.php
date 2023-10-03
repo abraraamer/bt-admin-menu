@@ -129,7 +129,7 @@ if (is_admin()) {
 
             add_settings_field(
                     'sticky_menus', //field id
-                    __('Sticky fields <br><small>Sticks important menus to the top</small>', 'bt-admin-menu'),
+                    __('Sticky fields <br><small>Sticks important items to the top</small>', 'bt-admin-menu'),
                     ['BT_Admin_Menu', 'bt_fields'],
                     BT_ADMIN_MENU_SLUG,
                     'bt_settings_section',
