@@ -1,6 +1,6 @@
 <hr>
 
-<h2>BT - Admin Menu Scroll</h2>
+<h2><?=__('Admin Menu Scroll', BT_ADMIN_MENU_TEXT_DOMAIN)?></h2>
 <form action="options.php" method="post">
     <?php
     settings_fields(BT_ADMIN_MENU_OPTIONS_KEY);

@@ -1,0 +1,11 @@
+msgid "Admin Menu Scroll"
+msgstr ""
+
+msgid "Sticky fields <br><small>Sticks important items to the top</small>"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""

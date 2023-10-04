@@ -14,9 +14,10 @@
 if (is_admin()) {
     DEFINE('BT_ADMIN_MENU_PATH', plugin_dir_path(__FILE__));
     DEFINE('BT_ADMIN_MENU_URL', plugin_dir_url(__FILE__));
-    DEFINE('BT_TEXT_DOMAIN', 'bt-admin-menu');
+    DEFINE('BT_ADMIN_MENU_TEXT_DOMAIN', 'bt-admin-menu');
     DEFINE('BT_ADMIN_MENU_SLUG', 'bt-menu-scroll-settings');
     DEFINE('BT_ADMIN_MENU_OPTIONS_KEY', 'bt_admin_menu_settings');
+    DEFINE('BT_ADMIN_MENU_PLUGIN_DIR_NAME', basename(__DIR__));
 
     add_filter('admin_init', ['BT_Admin_Menu', 'bt_register_settings']);
 
@@ -24,6 +25,12 @@ if (is_admin()) {
     add_action('admin_enqueue_scripts', ['BT_Admin_Menu', 'bt_menu_add_css'], 9999);
     add_filter('menu_order', ['BT_Admin_Menu', 'bt_menu_order'], 9999);
     add_filter('admin_init', ['BT_Admin_Menu', 'bt_register_settings']);
+
+    function bt_admin_menu_language_init() {
+        load_plugin_textdomain(BT_ADMIN_MENU_TEXT_DOMAIN, false, BT_ADMIN_MENU_PLUGIN_DIR_NAME.'/languages');
+    }
+
+    add_action('init', 'bt_admin_menu_language_init');
 
     class BT_Admin_Menu {
 
@@ -34,7 +41,7 @@ if (is_admin()) {
                     'bt-admin-menu',
                     BT_ADMIN_MENU_URL . 'css/' . $key . '.css', [], $time
             );
-            
+
             $time2 = filemtime(BT_ADMIN_MENU_PATH . '/js/' . $key . '.js');
             wp_enqueue_script(
                     'bt-admin-menu',
@@ -81,8 +88,8 @@ if (is_admin()) {
         static function bt_menu_page() {
             add_submenu_page(
                     'options-general.php',
-                    __('WP Menu Scroll', BT_TEXT_DOMAIN),
-                    __('WP Menu Scroll', BT_TEXT_DOMAIN),
+                    __('Admin Menu Scroll', BT_ADMIN_MENU_TEXT_DOMAIN),
+                    __('Admin Menu Scroll', BT_ADMIN_MENU_TEXT_DOMAIN),
                     'manage_options',
                     BT_ADMIN_MENU_SLUG,
                     ['BT_Admin_Menu', 'bt_menu_settings'],
@@ -98,11 +105,11 @@ if (is_admin()) {
 
                 echo '<div>' .
                 '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="1" ' . ($sticky ? 'checked' : '') . ' />' .
-                '<label>Yes</label>' .
+                '<label>'.__('Yes', BT_ADMIN_MENU_TEXT_DOMAIN).'</label>' .
                 '</div>' .
                 '<div>' .
                 '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="0"  ' . ($sticky ? '' : 'checked') . ' />' .
-                '<label>No</label>' .
+                '<label>'.__('No', BT_ADMIN_MENU_TEXT_DOMAIN).'</label>' .
                 '</div>';
             }
         }
@@ -123,7 +130,7 @@ if (is_admin()) {
 
             add_settings_field(
                     'sticky_menus', //field id
-                    __('Sticky fields <br><small>Sticks important items to the top</small>', BT_TEXT_DOMAIN),
+                    __('Sticky fields <br><small>Sticks important items to the top</small>', BT_ADMIN_MENU_TEXT_DOMAIN),
                     ['BT_Admin_Menu', 'bt_fields'],
                     BT_ADMIN_MENU_SLUG,
                     'bt_settings_section',
