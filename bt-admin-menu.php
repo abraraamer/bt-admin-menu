@@ -14,6 +14,7 @@
 if (is_admin()) {
     DEFINE('BT_ADMIN_MENU_PATH', plugin_dir_path(__FILE__));
     DEFINE('BT_ADMIN_MENU_URL', plugin_dir_url(__FILE__));
+    DEFINE('BT_TEXT_DOMAIN', 'bt-admin-menu');
     DEFINE('BT_ADMIN_MENU_SLUG', 'bt-menu-scroll-settings');
     DEFINE('BT_ADMIN_MENU_OPTIONS_KEY', 'bt_admin_menu_settings');
 
@@ -33,13 +34,7 @@ if (is_admin()) {
                     'bt-admin-menu',
                     BT_ADMIN_MENU_URL . 'css/' . $key . '.css', [], $time
             );
-            $color = get_theme_mod('my-custom-color', 'blue'); //E.g. #FF0000
-            $custom_css = "
-                .mycolor{
-                        background: {$color};
-                }";
-            wp_add_inline_style($key, $custom_css);
-
+            
             $time2 = filemtime(BT_ADMIN_MENU_PATH . '/js/' . $key . '.js');
             wp_enqueue_script(
                     'bt-admin-menu',
@@ -86,12 +81,11 @@ if (is_admin()) {
         static function bt_menu_page() {
             add_submenu_page(
                     'options-general.php',
-                    __('WP Menu Scroll', 'bt-admin-menu'),
-                    __('WP Menu Scroll', 'bt-admin-menu'),
+                    __('WP Menu Scroll', BT_TEXT_DOMAIN),
+                    __('WP Menu Scroll', BT_TEXT_DOMAIN),
                     'manage_options',
                     BT_ADMIN_MENU_SLUG,
                     ['BT_Admin_Menu', 'bt_menu_settings'],
-                    plugins_url('myplugin/images/icon.png'),
             );
         }
 
@@ -129,7 +123,7 @@ if (is_admin()) {
 
             add_settings_field(
                     'sticky_menus', //field id
-                    __('Sticky fields <br><small>Sticks important items to the top</small>', 'bt-admin-menu'),
+                    __('Sticky fields <br><small>Sticks important items to the top</small>', BT_TEXT_DOMAIN),
                     ['BT_Admin_Menu', 'bt_fields'],
                     BT_ADMIN_MENU_SLUG,
                     'bt_settings_section',
