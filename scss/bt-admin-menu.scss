@@ -87,6 +87,7 @@ body{
     //custom style
 
     #adminmenu{
+        overscroll-behavior: contain;
         box-sizing: border-box;
         overflow: hidden auto;
         position: static!important;
