@@ -26,6 +26,9 @@ if (is_admin()) {
     add_filter('menu_order', ['BT_Admin_Menu', 'bt_menu_order'], 9999);
     add_filter('admin_init', ['BT_Admin_Menu', 'bt_register_settings']);
 
+    global $bt_functions;
+    $bt_functions = [];
+
     function bt_admin_menu_language_init() {
         load_plugin_textdomain(BT_ADMIN_MENU_TEXT_DOMAIN, false, BT_ADMIN_MENU_PLUGIN_DIR_NAME . '/languages');
     }
@@ -33,6 +36,17 @@ if (is_admin()) {
     add_action('init', 'bt_admin_menu_language_init');
 
     class BT_Admin_Menu {
+
+        public static $sections = [
+            'settings' => [
+                'title' => '',
+                'desc' => '',
+                'fields' => [
+                    'sticky_menus' => ['type' => 'radio', 'title' => 'Sticky fields', 'default' => 1, 'desc' => 'Sticks important items to the top'],
+                    'menu_color' => ['type' => 'color', 'title' => 'Menu Color', 'default' => BT_ADMIN_MENU_DEFAULT_COLOR, 'desc' => 'Active and sub menu color'],
+                ]
+            ]
+        ];
 
         static function bt_menu_add_css() {
             $key = 'bt-admin-menu';
@@ -107,64 +121,62 @@ if (is_admin()) {
             );
         }
 
-        static function bt_fields($fieldName) {
+        static function bt_fields($args) {
+            list ($field, $type, $default) = $args; 
+            
             $options = get_option(BT_ADMIN_MENU_OPTIONS_KEY, []);
+            $value = isset($options[$field]) ? $options[$field] : $default;
+            switch ($type) {
+                case 'color':
 
-            if ($fieldName === 'sticky_menus') {
+                    echo '<div>' .
+                    '<input type="color" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $field . ']" value="' . $value . '"  />' .
+                    '</div>' .
+                    '<div>';
+                    break;
+                case 'radio';
 
-                $sticky = isset($options[$fieldName]) ? $options[$fieldName] : 1;
-
-                echo '<div>' .
-                '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="1" ' . ($sticky ? 'checked' : '') . ' />' .
-                '<label>' . __('Yes', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
-                '</div>' .
-                '<div>' .
-                '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="0"  ' . ($sticky ? '' : 'checked') . ' />' .
-                '<label>' . __('No', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
-                '</div>';
+                    echo '<div>' .
+                    '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $field . ']" value="1" ' . ($value ? 'checked' : '') . ' />' .
+                    '<label>' . __('Yes', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
+                    '</div>' .
+                    '<div>' .
+                    '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $field . ']" value="0"  ' . ($value ? '' : 'checked') . ' />' .
+                    '<label>' . __('No', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
+                    '</div>';
+                    break;
             }
-            if ($fieldName === 'menu_color') {
-
-                $menu_color = isset($options[$fieldName]) ? $options[$fieldName] : BT_ADMIN_MENU_DEFAULT_COLOR;
-
-                echo '<div>' .
-                '<input type="color" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="' . $menu_color . '"  />' .
-                '</div>' .
-                '<div>';
-            }
-        }
-
-        static function bt_settings_section_text() {
-            echo '';
         }
 
         static function bt_register_settings() {
             register_setting(BT_ADMIN_MENU_OPTIONS_KEY, BT_ADMIN_MENU_OPTIONS_KEY);
 
-            add_settings_section(
-                    'bt_settings_section', //$id 
-                    '', //$title
-                    ['BT_Admin_Menu', 'bt_settings_section_text'], //Function that echos out any content at the top of the section (between heading and fields).
-                    BT_ADMIN_MENU_SLUG //The slug-name of the settings page on which to show the section
-            );
+            foreach (self::$sections as $section_id => $section_options) {
+                $title = isset($section_options['title']) ? $section_options['title'] : '';
+                $description = !empty($section_options['desc']) ? '<br><small style="font-weight: normal;">' . __($section_options['desc'], BT_ADMIN_MENU_TEXT_DOMAIN) . '</small>' : '';
+                add_settings_section(
+                        'bt_' . $section_id . '_section', //$id 
+                        $title . $description, //$title
+                        '',
+                        BT_ADMIN_MENU_SLUG, //The slug-name of the settings page on which to show the section
+                );
+                foreach ($section_options['fields'] as $key => $field_options) {
+                    if (!isset($field_options['type']))
+                        continue;
 
-            add_settings_field(
-                    'sticky_menus', //field id
-                    __('Sticky fields <br><small>Sticks important items to the top</small>', BT_ADMIN_MENU_TEXT_DOMAIN),
-                    ['BT_Admin_Menu', 'bt_fields'],
-                    BT_ADMIN_MENU_SLUG,
-                    'bt_settings_section',
-                    'sticky_menus', //field id as an arguement
-            );
-
-            add_settings_field(
-                    'menu_color', //field id
-                    __('Menu Color <br><small>Active and sub menu color</small>', BT_ADMIN_MENU_TEXT_DOMAIN),
-                    ['BT_Admin_Menu', 'bt_fields'],
-                    BT_ADMIN_MENU_SLUG,
-                    'bt_settings_section',
-                    'menu_color', //field id as an arguement
-            );
+                    $description = !empty($field_options['desc']) ? '<br><small style="font-weight: normal;">' . __($field_options['desc'], BT_ADMIN_MENU_TEXT_DOMAIN) . '</small>' : '';
+                    $default =  isset($field_options['default']) ? $field_options['default'] : '';
+                    $type = $field_options['type'];
+                    add_settings_field(
+                            $key, //field id
+                            __($field_options['title'], BT_ADMIN_MENU_TEXT_DOMAIN) . $description,
+                            ['BT_Admin_Menu', 'bt_fields'],
+                            BT_ADMIN_MENU_SLUG,
+                            'bt_settings_section',
+                            [$key, $type, $default], //id, type, and default
+                    );
+                }
+            }
         }
 
     }
