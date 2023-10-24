@@ -1,3 +1,6 @@
+:root{
+    --bt-admin-menu-hover-color: #2271b1;
+}
 body{
     //overrides
     $default-menu-width: 160px;
@@ -70,11 +73,14 @@ body{
     #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap{
         width: $menu-width;
     }
+
+    #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
     #adminmenu li.opensub > .wp-submenu,
     #adminmenu li.menu-top:hover,
         #adminmenu li.opensub > a.menu-top,
-        #adminmenu li > a.menu-top:focus,#adminmenu .wp-has-current-submenu > .wp-submenu{
-        background-color: #2271b1;
+        #adminmenu li > a.menu-top:focus,
+        #adminmenu .wp-has-current-submenu > .wp-submenu{
+        background-color: var(--bt-admin-menu-hover-color);
         color: #fff;
     }
     #adminmenu .wp-has-current-submenu > .wp-submenu{
@@ -119,6 +125,9 @@ body{
             }
         }
 
+        li:hover div.wp-menu-image:before, li a:focus div.wp-menu-image:before, li.opensub div.wp-menu-image:before{
+            color: white;
+        }
     }
     &.folded{
         #adminmenu li#collapse-menu {

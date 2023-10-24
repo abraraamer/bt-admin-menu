@@ -16,6 +16,8 @@ if (is_admin()) {
     DEFINE('BT_ADMIN_MENU_SLUG', 'bt-menu-scroll-settings');
     DEFINE('BT_ADMIN_MENU_OPTIONS_KEY', 'bt_admin_menu_settings');
     DEFINE('BT_ADMIN_MENU_PLUGIN_DIR_NAME', basename(__DIR__));
+    DEFINE('BT_ADMIN_MENU_DEFAULT_COLOR', '#2271b1');
+    DEFINE('BT_ADMIN_MENU_DEFAULT_COLOR_KEY', 'bt-admin-menu-hover-color');
 
     add_filter('admin_init', ['BT_Admin_Menu', 'bt_register_settings']);
 
@@ -25,7 +27,7 @@ if (is_admin()) {
     add_filter('admin_init', ['BT_Admin_Menu', 'bt_register_settings']);
 
     function bt_admin_menu_language_init() {
-        load_plugin_textdomain(BT_ADMIN_MENU_TEXT_DOMAIN, false, BT_ADMIN_MENU_PLUGIN_DIR_NAME.'/languages');
+        load_plugin_textdomain(BT_ADMIN_MENU_TEXT_DOMAIN, false, BT_ADMIN_MENU_PLUGIN_DIR_NAME . '/languages');
     }
 
     add_action('init', 'bt_admin_menu_language_init');
@@ -35,10 +37,21 @@ if (is_admin()) {
         static function bt_menu_add_css() {
             $key = 'bt-admin-menu';
             $time = filemtime(BT_ADMIN_MENU_PATH . '/css/' . $key . '.css');
+            $main_css = 'bt-admin-menu';
             wp_enqueue_style(
-                    'bt-admin-menu',
+                    $main_css,
                     BT_ADMIN_MENU_URL . 'css/' . $key . '.css', [], $time
             );
+            //menu color
+            $options = get_option(BT_ADMIN_MENU_OPTIONS_KEY, []);
+            $menu_color = isset($options['menu_color']) ? $options['menu_color'] : BT_ADMIN_MENU_DEFAULT_COLOR;
+            if (!empty($menu_color)) {
+                $data = '#adminmenu{'
+                        . '--' . BT_ADMIN_MENU_DEFAULT_COLOR_KEY . ': ' . $menu_color . ''
+                        . '}';
+                wp_add_inline_style($main_css, $data);
+            }
+
 
             $time2 = filemtime(BT_ADMIN_MENU_PATH . '/js/' . $key . '.js');
             wp_enqueue_script(
@@ -103,12 +116,21 @@ if (is_admin()) {
 
                 echo '<div>' .
                 '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="1" ' . ($sticky ? 'checked' : '') . ' />' .
-                '<label>'.__('Yes', BT_ADMIN_MENU_TEXT_DOMAIN).'</label>' .
+                '<label>' . __('Yes', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
                 '</div>' .
                 '<div>' .
                 '<input type="radio" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="0"  ' . ($sticky ? '' : 'checked') . ' />' .
-                '<label>'.__('No', BT_ADMIN_MENU_TEXT_DOMAIN).'</label>' .
+                '<label>' . __('No', BT_ADMIN_MENU_TEXT_DOMAIN) . '</label>' .
                 '</div>';
+            }
+            if ($fieldName === 'menu_color') {
+
+                $menu_color = isset($options[$fieldName]) ? $options[$fieldName] : BT_ADMIN_MENU_DEFAULT_COLOR;
+
+                echo '<div>' .
+                '<input type="color" name="' . BT_ADMIN_MENU_OPTIONS_KEY . '[' . $fieldName . ']" value="' . $menu_color . '"  />' .
+                '</div>' .
+                '<div>';
             }
         }
 
@@ -133,6 +155,15 @@ if (is_admin()) {
                     BT_ADMIN_MENU_SLUG,
                     'bt_settings_section',
                     'sticky_menus', //field id as an arguement
+            );
+
+            add_settings_field(
+                    'menu_color', //field id
+                    __('Menu Color <br><small>Active and sub menu color</small>', BT_ADMIN_MENU_TEXT_DOMAIN),
+                    ['BT_Admin_Menu', 'bt_fields'],
+                    BT_ADMIN_MENU_SLUG,
+                    'bt_settings_section',
+                    'menu_color', //field id as an arguement
             );
         }
 
