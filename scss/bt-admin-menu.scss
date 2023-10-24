@@ -111,8 +111,12 @@ body{
         &::-webkit-scrollbar-thumb{
             background-color: darkgrey;
         }
-        .wp-submenu a:hover, .wp-submenu a:focus{
-            color: white;
+
+        .wp-submenu a{
+            color: rgba(white, 0.7);
+            &:hover, &:focus{
+                color: white;
+            }
         }
         li{
             position: static!important;
