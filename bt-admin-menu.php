@@ -3,10 +3,8 @@
 /**
  * Plugin Name: Admin Menu Scroll
  * Version: 1.0
- * Plugin URI: https://codecanyon.net/user/bent-tech33
  * Description: Scrollable Admin Menu
  * Author: Bent Tech
- * Author URI: https://codecanyon.net/user/bent-tech33
  * Text Domain: bt-admin-menu
  * Domain Path: /languages/
  * License: GPL v2
