@@ -73,7 +73,11 @@ body{
     #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap{
         width: $menu-width;
     }
-
+	
+	#adminmenu div.wp-menu-name{
+	//sometimes there's an absolute positioned icon
+	position: relative;
+	}
     #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
     #adminmenu li.opensub > .wp-submenu,
     #adminmenu li.menu-top:hover,
