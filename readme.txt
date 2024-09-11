@@ -1,3 +1,5 @@
+A direly needed plugin for WordPress backend. It scrolls, makes the menu more readable and highlights the active menu clearly.
+
 Contributors: Bent Tech
 Tags: Wordpress admin menu, scrollable admin menu
 Requires at least: 5.0
